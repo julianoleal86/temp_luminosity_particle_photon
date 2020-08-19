@@ -1,38 +1,33 @@
 #include <spark-dallas-temperature.h>
 #include <OneWire.h>
 
-OneWire pino(D3);
-DallasTemperature barramento(&pino);
+OneWire pin(D3);
+DallasTemperature bus(&pin);
 DeviceAddress sensor;
 
 void setup() {
 
    // dht.begin();
-    Particle.publish("state", "Inicializando sensores");
-    barramento.begin();
-    barramento.getAddress(sensor, 0); // Posição do sensor = 0; Caso existam outros sensores, conectar no endereço, 1,2...
-}
+    Particle.publish("state", "Starting sensors");
+    bus.begin();
+    bus.getAddress(sensor, 0); // Sensor position = 0;
+  }
+
+
 
 void loop() {
 	delay(2000);
-//Medição de temperatura    
-    barramento.requestTemperatures(); 
-    double t = barramento.getTempC(sensor);
-    Particle.variable("Temperatura (°C)", t);
-//Medição de luminosidade 
-    int luminosidade  = analogRead(A0);  
-  //Converte o valor lido do LDR em porcentagem de modo proporcional ao ADC de 12bits
-    int l = map(luminosidade, 0, 4095, 0, 100); 
-    Particle.variable("Luminosidade (%)", l);
+//Temperature reading   
+    bus.requestTemperatures(); 
+    double temp = bus.getTempC(sensor);
+    Particle.variable("Temperature (°C)", temp);
+//Luminosity reading     
+    int luminosity  = analogRead(A0);  
+//12 bits ADC mapping
+    int lumi = map(luminosity, 0, 4095, 0, 100); 
+    Particle.variable("Luminosity (%)", lumi);
 
-// Check if any reads failed and exit early (to try again).
-	//if (isnan(h) || isnan(t)) {
-	//	 Particle.publish("Mensage",0, PUBLIC);
-	//	return;
-	//}
-
-	 Particle.publish("Temperatura (°C)", String(t), PUBLIC);
-	 Particle.publish("Luminosidade (%)", String(l), PUBLIC);
+	Particle.publish("temp", String(temp), PUBLIC);
+	Particle.publish("lumi", String(lumi), PUBLIC);
 	
-    //Particle.publish("readings", String::format("{\"Temp(°C)\": %4.2f, \"lum.(%)\": %4.2f}", t, l));
 }
