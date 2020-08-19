@@ -1,1 +1,1 @@
-# temp_luminosity_particle_photon
+Sketch uploaded at my Particle Photon for monitoring the temperature and luminosity at my lab desk. The Webhook Particle integration was made with the Thingspeak platform to visualize the data measured.
